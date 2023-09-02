@@ -77,8 +77,3 @@ async def imap(username: str, password: str):
     imap.close()
     imap.logout()
     return emails
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
