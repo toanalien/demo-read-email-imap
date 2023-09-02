@@ -12,8 +12,8 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.post('/imap')
-async def imap(account: str):
+@app.post('/imap', description='email|password,email|password')
+async def imap(account: str, ):
     imap = imaplib.IMAP4_SSL("outlook.office365.com", 993)
     emails = {}
     accounts = account.split(',')
