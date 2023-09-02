@@ -12,9 +12,17 @@ async def root():
     return {"message": "Hello World"}
 
 
+def get_imap_server(email):
+    if "hotmail" in email:
+        return 'outlook.office365.com', 993
+    elif "gmail" in email:
+        return 'imap.gmail.com', 993
+    else:
+        return None, None
+
+
 @app.post('/imap', description='email|password,email|password')
-async def imap(account: str, ):
-    imap = imaplib.IMAP4_SSL("outlook.office365.com", 993)
+async def imap(account: str):
     emails = {}
     accounts = account.split(',')
     print(accounts)
@@ -30,6 +38,15 @@ async def imap(account: str, ):
 
         # Log in
         try:
+            server, port = get_imap_server(username)
+            if server is None:
+                emails[username].append({
+                    'subject': 'Cannot get imap server',
+                    'receiver': username,
+                    'body': 'Login failed',
+                })
+                continue
+            imap = imaplib.IMAP4_SSL(server, port)
             imap.login(username, password)
         except imaplib.IMAP4.error:
             if username not in emails.keys():
@@ -38,7 +55,6 @@ async def imap(account: str, ):
                 'subject': 'Login failed',
                 'receiver': username,
                 'body': 'Login failed',
-                'from': ''
             })
             continue
 
