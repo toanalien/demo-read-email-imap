@@ -17,7 +17,10 @@ async def imap(username: str, password: str):
     imap = imaplib.IMAP4_SSL("outlook.office365.com", 993)
 
     # Log in
-    imap.login(username, password)
+    try:
+        imap.login(username, password)
+    except imaplib.IMAP4.error:
+        return {"message": "Login failed"}
 
     imap.select("INBOX")
 
